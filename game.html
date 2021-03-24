@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Game Page</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script src="https://kit.fontawesome.com/274d840603.js" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link rel = "stylesheet" href =  "baseecss.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+        <script>
+
+            var score = 0;
+            var output;
+            var toggle  = 0;
+            var tile  = 0;
+            var blackTiles = [];
+			var totalNumberOfTiles;
+            var audio = new Audio('hit.ogg');
+            var input = 30;
+
+
+
+            function getInput(){
+                input = prompt("What should be the time limit in seconds?");
+                input = parseInt(input,10);
+            }
+
+            function failed(){
+                score = 0;
+                document.getElementById('score').innerHTML = "Score: " + score;
+                alert('You failed.');
+                var tiles = document.getElementsByClassName('tile');
+                for(var i = 0; i < tiles.length; i++){
+                    tiles[i].style.backgroundColor = "white";
+                }
+                toggle = 0;
+                blackTiles = [];
+            }
+
+            function done(){
+                score = 0;
+                document.getElementById('score').innerHTML = "Score: " + score;
+                alert('Times up!');
+                var tiles = document.getElementsByClassName('tile');
+                for(var i = 0; i < tiles.length; i++){
+                    tiles[i].style.backgroundColor = "white";
+                }
+                toggle = 0;
+                blackTiles = [];
+            }
+
+            function timer(){
+                document.getElementById('time').innerHTML = "Time limit: " + input + " seconds";
+                setTimeout(done,input*1000);
+            }
+
+            function randomizer(){
+				console.log("Start");
+                toggle = 1;
+				
+				totalNumberOfTiles = document.getElementsByClassName("tile").length
+				for(var i = 0; i < totalNumberOfTiles; i++){
+					document.getElementsByClassName("tile")[i].addEventListener("click", clickTile);
+				}
+				
+				console.log("Start");
+				
+                generateBlackTile();
+
+				generateBlackTile();
+				generateBlackTile();
+                
+                timer();
+            }
+			
+			function generateBlackTile(){
+				var isBlackTile = false;
+				var randNumber;
+				
+				do{
+					randNumber = generateRandomInteger(16,0);
+					isBlackTile = boolSearchArray(randNumber, blackTiles);
+					console.log(randNumber);
+					console.log(blackTiles);
+					console.log(isBlackTile);
+                } while(isBlackTile == true);
+				
+				blackTiles.push(randNumber);
+				document.getElementsByClassName('tile')[randNumber].style.backgroundColor = "black";
+			}
+			
+			function generateRandomInteger(min, max){
+				return Math.floor(Math.random()*(max-min)) + min;
+			}
+			
+			function boolSearchArray(item, searchArray){
+				for(var i = 0; i < searchArray.length; i++){
+					if (searchArray[i] == item){
+						return true;
+					}
+				}
+				return false;
+			}
+			
+            function clickTile(event){
+                if(toggle == 1){
+					var tileIndex = -1;
+			
+					for(var i = 0; i < totalNumberOfTiles; i++){
+						if(document.getElementsByClassName(event.target.className)[i] === event.target){
+							tileIndex = i;
+							break;
+						}
+					}
+				
+                    if(blackTiles.includes(tileIndex) == true){
+                        document.getElementsByClassName('tile')[tileIndex].style.backgroundColor = "white";
+						
+                        score++;
+						
+                        document.getElementById('score').innerHTML = "Score: " + score;
+						
+						generateBlackTile();
+						
+						blackTiles.splice(blackTiles.indexOf(tileIndex),1);
+                        audio.play();
+                    }
+                    else{
+                        failed();
+                    }
+                }
+                else{
+                    alert("Please start the game first.");
+                }
+            }
+
+        </script>
+    </head>
+    <body id= "hi">
+        <div id = "gray-background"></div>
+        <div id = "red-background"></div>
+        <div id = "grayer-background"></div>
+        <div id = "light-gray-background"></div>
+        <div id = "white-background"></div>
+        <div id = "main-body" class = "container">
+            <h1 id = "title">Don't tap the white tiles</h1>
+            <h1 id = "score">Score: 0</h1>
+            <h1 id = "time">Time limit: 30 seconds</h1>
+            <table>
+                <tr>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                </tr>
+                <tr>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                </tr>
+                <tr>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                </tr>
+                <tr>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                    <td class = "tile"></td>
+                </tr>
+            </table>
+            <button id = "rawr" type="button" class="nes-btn is-error" onclick="window.location.href='Index.html'">Home</button>
+            <button id = "uwu" type="button" class="nes-btn is-success" onclick = "getInput()">Select</button>
+            <button id = "owo" class="nes-btn is-error from-left nes-pointer" onclick = "randomizer()">Start</button>
+        </div>
+    </body>
+</html>
